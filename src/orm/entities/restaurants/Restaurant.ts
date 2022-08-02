@@ -1,5 +1,6 @@
 import { Menu } from './Menu';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { OpeningHours } from './OpeningHours';
 
 @Entity()
 export class Restaurant {
@@ -10,11 +11,11 @@ export class Restaurant {
   cashBalance: number;
 
   @Column()
-  openingHours: string;
-
-  @Column()
   restaurantName: string;
 
-  @OneToMany(() => Menu, (menu) => menu.restaurant, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @OneToMany(() => OpeningHours, (opHour) => opHour.restaurant, { cascade: true })
+  openingHours: OpeningHours[];
+
+  @OneToMany(() => Menu, (menu) => menu.restaurant, { cascade: true })
   menu: Menu[];
 }

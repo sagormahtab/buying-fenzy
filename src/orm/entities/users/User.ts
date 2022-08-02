@@ -51,7 +51,7 @@ export class User {
   @Column({ type: 'double precision' })
   cashBalance: number;
 
-  @OneToMany(() => PurchaseHistory, (purchase) => purchase.user, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
+  @OneToMany(() => PurchaseHistory, (purchase) => purchase.user, { cascade: true })
   purchases: PurchaseHistory[];
 
   setLanguage(language: Language) {

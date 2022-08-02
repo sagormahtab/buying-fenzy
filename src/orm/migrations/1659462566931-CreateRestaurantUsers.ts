@@ -1,14 +1,23 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class CreateUsersNRestaurants1659038045219 implements MigrationInterface {
-    name = 'CreateUsersNRestaurants1659038045219'
+export class CreateRestaurantUsers1659462566931 implements MigrationInterface {
+    name = 'CreateRestaurantUsers1659462566931'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`
+            CREATE TABLE "opening_hours" (
+                "id" SERIAL NOT NULL,
+                "week_name" character varying NOT NULL,
+                "start_time" TIME NOT NULL,
+                "end_time" TIME NOT NULL,
+                "restaurant_id" integer,
+                CONSTRAINT "PK_09415e2b345103b1f5971464f85" PRIMARY KEY ("id")
+            )
+        `);
         await queryRunner.query(`
             CREATE TABLE "restaurant" (
                 "id" SERIAL NOT NULL,
                 "cash_balance" double precision NOT NULL,
-                "opening_hours" character varying NOT NULL,
                 "restaurant_name" character varying NOT NULL,
                 CONSTRAINT "PK_649e250d8b8165cb406d99aa30f" PRIMARY KEY ("id")
             )
@@ -51,6 +60,10 @@ export class CreateUsersNRestaurants1659038045219 implements MigrationInterface 
             )
         `);
         await queryRunner.query(`
+            ALTER TABLE "opening_hours"
+            ADD CONSTRAINT "FK_07df934a54a9efa05de6089546a" FOREIGN KEY ("restaurant_id") REFERENCES "restaurant"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
             ALTER TABLE "menu"
             ADD CONSTRAINT "FK_a9c5473205703022c7a53a410c2" FOREIGN KEY ("restaurant_id") REFERENCES "restaurant"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
@@ -68,6 +81,9 @@ export class CreateUsersNRestaurants1659038045219 implements MigrationInterface 
             ALTER TABLE "menu" DROP CONSTRAINT "FK_a9c5473205703022c7a53a410c2"
         `);
         await queryRunner.query(`
+            ALTER TABLE "opening_hours" DROP CONSTRAINT "FK_07df934a54a9efa05de6089546a"
+        `);
+        await queryRunner.query(`
             DROP TABLE "purchase_history"
         `);
         await queryRunner.query(`
@@ -78,6 +94,9 @@ export class CreateUsersNRestaurants1659038045219 implements MigrationInterface 
         `);
         await queryRunner.query(`
             DROP TABLE "restaurant"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "opening_hours"
         `);
     }
 
